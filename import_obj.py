@@ -262,10 +262,9 @@ def create_materials(filepath, relpath,
     # Create new materials
     for name in unique_materials:  # .keys()
         if name is not None:
-            #print(name.decode('utf-8', "replace"))
-            ma = unique_materials[name] = bpy.data.materials[name.decode('utf-8', "replace")] #bpy.data.materials.new(name.decode('utf-8', "replace"))
+            ma = unique_materials[name] = bpy.data.materials.new(name.decode('utf-8', "replace"))
             
-            """unique_material_images[name] = None  # assign None to all material images to start with, add to later.
+            unique_material_images[name] = None  # assign None to all material images to start with, add to later.
             if use_cycles:
                 from modules import cycles_shader_compat
                 ma_wrap = cycles_shader_compat.CyclesShaderWrapper(ma)
@@ -350,7 +349,7 @@ def create_materials(filepath, relpath,
                         if do_fresnel:
                             if use_cycles:
                                 print("WARNING, currently unsupported fresnel option, skipped.")
-                            context_material.raytrace_mirror.fresnel = 1.0  # could be any value for 'ON'"""
+                            context_material.raytrace_mirror.fresnel = 1.0  # could be any value for 'ON'
 
                         """
                         if do_raytrace:
@@ -358,7 +357,7 @@ def create_materials(filepath, relpath,
                         else:
                             context_material.use_raytrace = False
                         """
-                        """# XXX, this is not following the OBJ spec, but this was
+                        # XXX, this is not following the OBJ spec, but this was
                         # written when raytracing wasnt default, annoying to disable for blender users.
                         context_material.use_raytrace = True
 
@@ -528,7 +527,7 @@ def create_materials(filepath, relpath,
                                                 context_material_name, img_data, line, 'refl')
                     else:
                         print("\t%r:%r (ignored)" % (filepath, line))
-            mtl.close()"""
+            mtl.close()
 
 
 def split_mesh(verts_loc, faces, unique_materials, filepath, SPLIT_OB_OR_GROUP):
