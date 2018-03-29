@@ -360,11 +360,17 @@ def create_materials(filepath, relpath,
                         context_material.use_raytrace = True"""
 
 
+                    # Check if .mtl provided a template material name
                     newMatName = line_split[1].decode('utf-8', 'replace')
                     if(len(line_split) < 3):
                         templateMatName = "Plastic"
                     else:
-                        templateMatName = line_split[2].decode('utf-8', 'replace')
+                        # Check if a material exists with this name
+                        tempTemplate = line_split[2].decode('utf-8', 'replace')
+                        if(tempTemplate in bpy.data.materials):
+                            templateMatName = line_split[2].decode('utf-8', 'replace')
+                        else:
+                            templateMatName = "Plastic"
 
                     matTemplateMap[newMatName] = templateMatName
 
@@ -399,7 +405,9 @@ def create_materials(filepath, relpath,
                 elif context_material:
                     if line_id == b'kd':
                         col = (float_func(line_split[1]), float_func(line_split[2]), float_func(line_split[3]), 1)
+                        print(col)
                         if "RBX_Diffuse" in newMatNodes:
+                            print(col)
                             newMatNodes["RBX_Diffuse"].outputs[0].default_value = col
 
                         """if(templateMatName == "Leather"):
