@@ -41,6 +41,7 @@ from bpy_extras.image_utils import load_image
 
 from progress_report import ProgressReport, ProgressReportSubstep
 
+matTemplateMap = {}
 
 def line_value(line_split):
     """
@@ -262,13 +263,13 @@ def create_materials(filepath, relpath,
     # Create new materials
     for name in unique_materials:  # .keys()
         if name is not None:
-            ma = unique_materials[name] = bpy.data.materials.new(name.decode('utf-8', "replace"))
+            ma = unique_materials[name] = None #name.decode('utf-8', 'replace')
             
             unique_material_images[name] = None  # assign None to all material images to start with, add to later.
-            if use_cycles:
-                from modules import cycles_shader_compat
-                ma_wrap = cycles_shader_compat.CyclesShaderWrapper(ma)
-                cycles_material_wrap_map[ma] = ma_wrap
+            #if use_cycles:
+                #from modules import cycles_shader_compat
+                #ma_wrap = cycles_shader_compat.CyclesShaderWrapper(ma)
+                #cycles_material_wrap_map[ma] = ma_wrap
 
 
     # XXX Why was this needed? Cannot find any good reason, and adds stupid empty matslot in case we do not separate
@@ -305,7 +306,7 @@ def create_materials(filepath, relpath,
 
                 if line_id == b'newmtl':
                     # Finalize previous mat, if any.
-                    if context_material:
+                    """if context_material:
                         emit_value = sum(emit_colors) / 3.0
                         if emit_value > 1e-6:
                             if use_cycles:
@@ -351,19 +352,31 @@ def create_materials(filepath, relpath,
                                 print("WARNING, currently unsupported fresnel option, skipped.")
                             context_material.raytrace_mirror.fresnel = 1.0  # could be any value for 'ON'
 
-                        """
-                        if do_raytrace:
-                            context_material.use_raytrace = True
-                        else:
-                            context_material.use_raytrace = False
-                        """
                         # XXX, this is not following the OBJ spec, but this was
                         # written when raytracing wasnt default, annoying to disable for blender users.
-                        context_material.use_raytrace = True
+                        context_material.use_raytrace = True"""
 
-                    context_material_name = line_value(line_split)
-                    context_material = unique_materials.get(context_material_name)
-                    if use_cycles and context_material is not None:
+
+                    newMatName = line_split[1].decode('utf-8', 'replace')
+                    templateMatName = line_split[2].decode('utf-8', 'replace')
+
+                    matTemplateMap[newMatName] = templateMatName
+
+                    if bpy.data.materials.find(newMatName) != -1:
+                        bpy.data.materials.remove(bpy.data.materials.get(newMatName))
+
+                    unique_materials[line_split[1]] = bpy.data.materials.get(templateMatName).copy()
+                    unique_materials[line_split[1]].name = newMatName
+
+                    #newMat = bpy.data.materials.get(templateMatName).copy()
+                    #newMat.name = newMatName
+                    #print(newMat.name)
+                    #print(type(newMat.name))
+                    #print(type(""))
+                    #context_material_name = line_split[1]
+                    #context_material = 
+                    #unique_materials[newMat.name] = newMat
+                    """if use_cycles and context_material is not None:
                         context_mat_wrap = cycles_material_wrap_map[context_material]
                     context_material_vars.clear()
 
@@ -374,10 +387,10 @@ def create_materials(filepath, relpath,
                     do_transparency = False
                     do_glass = False
                     do_fresnel = False
-                    do_raytrace = False
+                    do_raytrace = False"""
 
 
-                elif context_material:
+                """elif context_material:
                     # we need to make a material to assign properties to it.
                     if line_id == b'ka':
                         col = (float_func(line_split[1]), float_func(line_split[2]), float_func(line_split[3]))
@@ -526,7 +539,7 @@ def create_materials(filepath, relpath,
                             load_material_image(context_material, context_mat_wrap, use_cycles,
                                                 context_material_name, img_data, line, 'refl')
                     else:
-                        print("\t%r:%r (ignored)" % (filepath, line))
+                        print("\t%r:%r (ignored)" % (filepath, line))"""
             mtl.close()
 
 
@@ -727,6 +740,8 @@ def create_mesh(new_objects,
     # make sure the list isnt too big
     for material in materials:
         me.materials.append(material)
+        #me.materials.append(bpy.data.materials.get(matTemplateMap[ material ]))
+    
 
     me.vertices.add(len(verts_loc))
     me.loops.add(tot_loops)
