@@ -294,6 +294,9 @@ def create_materials(filepath, relpath,
 
             # print('\t\tloading mtl: %e' % mtlpath)
             context_material = None
+            newMatName = ""
+            templateMatName = ""
+            newMatNodes = None
             context_mat_wrap = None
             mtl = open(mtlpath, 'rb')
             for line in mtl:  # .readlines():
@@ -365,7 +368,8 @@ def create_materials(filepath, relpath,
                     if bpy.data.materials.find(newMatName) != -1:
                         bpy.data.materials.remove(bpy.data.materials.get(newMatName))
 
-                    unique_materials[line_split[1]] = bpy.data.materials.get(templateMatName).copy()
+                    context_material = unique_materials[line_split[1]] = bpy.data.materials.get(templateMatName).copy()
+                    newMatNodes = context_material.node_tree.nodes
                     unique_materials[line_split[1]].name = newMatName
 
                     #newMat = bpy.data.materials.get(templateMatName).copy()
@@ -389,6 +393,58 @@ def create_materials(filepath, relpath,
                     do_fresnel = False
                     do_raytrace = False"""
 
+                elif context_material:
+                    if line_id == b'kd':
+                        col = (float_func(line_split[1]), float_func(line_split[2]), float_func(line_split[3]), 1)
+                        if(templateMatName == "Leather"):
+                            newMatNodes["Group.001"].inputs[0].default_value = col
+                        elif(templateMatName == "AbstractGlass"):
+                            newMatNodes["Group"].inputs[0].default_value = col
+                        elif(templateMatName == "AnodizedMetal"):
+                            newMatNodes["Group"].inputs[0].default_value = col
+                        elif(templateMatName == "Cacholong"):
+                            newMatNodes["Group.001"].inputs[0].default_value = col
+                        elif(templateMatName == "Ceramic"):
+                            newMatNodes["Group"].inputs[0].default_value = col
+                        elif(templateMatName == "Diamond"):
+                            newMatNodes["NodeGroup"].inputs[1].default_value = col
+                        elif(templateMatName == "GalvanizedMetal"):
+                            newMatNodes["Mix"].inputs[2].default_value = col
+                        elif(templateMatName == "Glass"):
+                            newMatNodes["Glass BSDF"].inputs[0].default_value = col
+                        elif(templateMatName == "LED"):
+                            newMatNodes["Emission"].inputs[0].default_value = col
+                        elif(templateMatName == "Lollipop"):
+                            newMatNodes["Group"].inputs[0].default_value = col
+                        elif(templateMatName == "Matte"):
+                            newMatNodes["Diffuse BSDF"].inputs[0].default_value = col
+                        elif(templateMatName == "Netting"):
+                            newMatNodes["Group"].inputs[0].default_value = col
+                        elif(templateMatName == "Plastic2"):
+                            newMatNodes["Group"].inputs[0].default_value = col
+                        elif(templateMatName == "Plastic3"):
+                            newMatNodes["Group"].inputs[0].default_value = col
+                        elif(templateMatName == "Polystyrene"):
+                            newMatNodes["Group"].inputs[0].default_value = col
+                        elif(templateMatName == "RoughLeather"):
+                            newMatNodes["Group.001"].inputs[0].default_value = col
+                        elif(templateMatName == "Satin"):
+                            newMatNodes["Group"].inputs[0].default_value = col
+                        elif(templateMatName == "Skin"):
+                            newMatNodes["RGB"].outputs[0].default_value = col
+                        elif(templateMatName == "Stone"):
+                            newMatNodes["Diffuse BSDF"].inputs[0].default_value = col
+                        elif(templateMatName == "TowelSurface"):
+                            newMatNodes["RGB"].outputs[0].default_value = col
+                        elif(templateMatName == "Wax"):
+                            newMatNodes["Group"].inputs[1].default_value = col
+
+nodes["RGB.001"].outputs[0].default_value
+
+nodes["RGB.001"].outputs[0].default_value
+nodes["RGB"].outputs[0].default_value
+nodes["RGB"].outputs[0].default_value
+nodes["RGB.001"].outputs[0].default_value
 
                 """elif context_material:
                     # we need to make a material to assign properties to it.
