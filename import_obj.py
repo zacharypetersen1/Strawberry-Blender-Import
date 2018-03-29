@@ -361,7 +361,10 @@ def create_materials(filepath, relpath,
 
 
                     newMatName = line_split[1].decode('utf-8', 'replace')
-                    templateMatName = line_split[2].decode('utf-8', 'replace')
+                    if(len(line_split) < 3):
+                        templateMatName = "Plastic"
+                    else:
+                        templateMatName = line_split[2].decode('utf-8', 'replace')
 
                     matTemplateMap[newMatName] = templateMatName
 
@@ -396,7 +399,10 @@ def create_materials(filepath, relpath,
                 elif context_material:
                     if line_id == b'kd':
                         col = (float_func(line_split[1]), float_func(line_split[2]), float_func(line_split[3]), 1)
-                        if(templateMatName == "Leather"):
+                        if "RBX_Diffuse" in newMatNodes:
+                            newMatNodes["RBX_Diffuse"].outputs[0].default_value = col
+
+                        """if(templateMatName == "Leather"):
                             newMatNodes["Group.001"].inputs[0].default_value = col
                         elif(templateMatName == "AbstractGlass"):
                             newMatNodes["Group"].inputs[0].default_value = col
@@ -437,14 +443,7 @@ def create_materials(filepath, relpath,
                         elif(templateMatName == "TowelSurface"):
                             newMatNodes["RGB"].outputs[0].default_value = col
                         elif(templateMatName == "Wax"):
-                            newMatNodes["Group"].inputs[1].default_value = col
-
-nodes["RGB.001"].outputs[0].default_value
-
-nodes["RGB.001"].outputs[0].default_value
-nodes["RGB"].outputs[0].default_value
-nodes["RGB"].outputs[0].default_value
-nodes["RGB.001"].outputs[0].default_value
+                            newMatNodes["Group"].inputs[1].default_value = col"""
 
                 """elif context_material:
                     # we need to make a material to assign properties to it.
