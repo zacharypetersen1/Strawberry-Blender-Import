@@ -377,7 +377,15 @@ def create_materials(filepath, relpath,
                     if bpy.data.materials.find(newMatName) != -1:
                         bpy.data.materials.remove(bpy.data.materials.get(newMatName))
 
+                    if bpy.data.materials.find(templateMatName) == -1:
+                        print('Creating: ' + templateMatName)
+                        bpy.data.materials.new(templateMatName)
+
                     context_material = unique_materials[line_split[1]] = bpy.data.materials.get(templateMatName).copy()
+
+                    if not context_material.use_nodes:
+                        context_material.use_nodes = True
+
                     newMatNodes = context_material.node_tree.nodes
                     unique_materials[line_split[1]].name = newMatName
 
